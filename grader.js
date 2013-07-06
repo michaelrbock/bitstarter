@@ -58,8 +58,7 @@ var checkHtmlFromUrl = function(result, response) {
 	var present = $(checks[ii]).length > 0;
 	out[checks[ii]] = present;
     }
-    var outJson = JSON.stringify(out, null, 4);
-    console.log(outJson);
+    printOut(out);
 };
 
 var checkHtmlFile = function(htmlfile, checksfile, url) {
@@ -75,9 +74,13 @@ var checkHtmlFile = function(htmlfile, checksfile, url) {
 	    var present = $(checks[ii]).length > 0;
 	    out[checks[ii]] = present;
 	}
-	var outJson = JSON.stringify(out, null, 4);
-	console.log(outJson);
+	printOut(out);
     }
+};
+
+var printOut = function(outDict) {
+    var outJson = JSON.stringify(outDict, null, 4);
+    console.log(outJson);
 };
 
 var clone = function(fn) {
