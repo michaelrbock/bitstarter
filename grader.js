@@ -46,25 +46,29 @@ var loadChecks = function(checksfile) {
     return JSON.parse(fs.readFileSync(checksfile));
 };
 
-var checkHtmlFromUrl = function(result, response) {
-    if (result instanceof Error) {
-	console.log("Error: " + util.format(response.message));
-	process.exit(1);
-    }
-    $ = cheerioHtmlFile(result);
-    var checks = loadChecks(CHECKSFILE_DEFAULT).sort()
-    var out = {};
-    for (var ii in checks) {
-	var present = $(checks[ii]).length > 0;
-	out[checks[ii]] = present;
-    }
-    printOut(out);
+var buildCheckHtmlFromUrl = function(checksfile) {
+    var checkHtmlFromUrl = function(result, response) {
+	if (result instanceof Error) {
+	    console.log("Error: " + util.format(response.message));
+	    process.exit(1);
+	}
+	$ = cheerioHtmlFile(result);
+	var checks = loadChecks(checksfile).sort()
+	var out = {};
+	for (var ii in checks) {
+	    var present = $(checks[ii]).length > 0;
+	    out[checks[ii]] = present;
+	}
+	printOut(out);
+    };
+    return checkHtmlFromUrl;
 };
 
 var checkHtmlFile = function(htmlfile, checksfile, url) {
     url = (typeof url === "undefined") ? "undefined" : url;
     if (url != "undefined") {
-	rest.get(url).on('complete', checkHtmlFromUrl);
+	var checkHtml = buildCheckHtmlFromUrl(checksfile);
+	rest.get(url).on('complete', checkHtml);
     } else {
 	htmlfile = fs.readFileSync(htmlfile);
 	$ = cheerioHtmlFile(htmlfile);	
